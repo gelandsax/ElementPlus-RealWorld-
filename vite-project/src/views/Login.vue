@@ -1,43 +1,17 @@
 <template>
-  <div class="auth-page">
-    <div class="container page">
-      <div class="row">
-        <div class="col-md-6 offset-md-3 col-xs-12">
-          <h1 class="text-xs-center">Sign in</h1>
-          <p class="text-xs-center">
-            <RouterLink to="/register">Need an account?</RouterLink>
-            
-          </p>
+  <el-form :inline="true" :model="login_req" class="demo-form-inline">
+    <el-form-item label="Email">
+      <el-input v-model="login_req.user.email" placeholder="请输入邮箱" clearable />
+    </el-form-item>
+    
+    <el-form-item label="Password">
+      <el-input v-model="login_req.user.password" type="password" placeholder="请输入密码" clearable />
+    </el-form-item>
 
-          <ul class="error-messages">
-            <li>That email is already taken</li>
-          </ul>
-
-          <form>
-            <fieldset class="form-group">
-              <input
-                class="form-control form-control-lg"
-                type="text"
-                placeholder="Email"
-                v-model="login_req.user.email"
-              />
-            </fieldset>
-            <fieldset class="form-group">
-              <input
-                class="form-control form-control-lg"
-                type="password"
-                placeholder="Password"
-                v-model="login_req.user.password"
-              />
-            </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right" @click.prevent="Login()">
-              Sign in
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+    <el-form-item>
+      <el-button type="primary" @click.prevent="Login()">登录</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
@@ -76,7 +50,13 @@ function Login(){
 
 </script>
 <style scoped>
+  .demo-form-inline .el-input {
+  --el-input-width: 220px;
+}
 
+.demo-form-inline .el-select {
+  --el-select-width: 220px;
+}
 </style>
 
 

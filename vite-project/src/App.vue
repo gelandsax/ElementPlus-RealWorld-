@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <el-icon size="40" color=red>
-      <Service />
-    </el-icon>
-    <!-- 或者独立使用它，不从父级获取属性 -->
-    
-  </div>
+  <!-- <AuthHeader v-if = "userinfo"></AuthHeader>
+  <CommonHeader v-else></CommonHeader> -->
+  <RouterView></RouterView>
+  <!-- <Footer></Footer> -->
+
 </template>
 
 <script setup lang="ts">
@@ -18,14 +16,6 @@ import { storeToRefs } from "pinia";
 let store = useUserStore();
 const { userinfo } = storeToRefs(store);
 
-import {
-  Check,
-  Delete,
-  Edit,
-  Message,
-  Search,
-  Star,
-} from '@element-plus/icons-vue'
 
 </script>
 
