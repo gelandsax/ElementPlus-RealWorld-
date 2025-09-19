@@ -1,5 +1,32 @@
 <template>
+     <el-button type="primary" class="!ml-0" plain @click="dialogFormVisible = true">
+      Open a Form nested Dialog
+  </el-button>
 
+  <el-dialog v-model="dialogFormVisible" title="Shipping address" width="500">
+    <el-form :model="article_info_req">
+      <el-form-item label="title" label-width="200px">
+        <el-input v-model="article_info_req.article.title" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="description" label-width="200px">
+        <el-input v-model="article_info_req.article.description" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="body" label-width="200px">
+        <el-input v-model="article_info_req.article.body" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="tagList" label-width="200px">
+        <el-input v-model="article_info_req.article.tagList" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="addArticle()">
+          Confirm
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 
   <el-table :data="article_info.articles" style="width: 100%">
     <el-table-column prop="slug" label="Slug" width="180" />
@@ -41,7 +68,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import axios from '../utils/request'
-import type { Article, MultiArticles, Tags } from '../models';
+import type { Article, CreateArticleReq, MultiArticles, Tags } from '../models';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '../store/user'
 import { storeToRefs } from 'pinia'
@@ -51,6 +78,28 @@ const { userinfo } = storeToRefs(store)
 
 const pageIndex = ref<number>(1)
 const pageSize = ref<number>(10)
+
+let dialogFormVisible = ref<boolean>(false);
+
+let article_info_req = ref<CreateArticleReq>({
+  article: {
+    title: '',
+    description: '',
+    body: '',
+    tagList: []
+  }
+})
+
+function addArticle(){
+  dialogFormVisible.value = false;
+  axios.post('/articles', article_info_req.value).then(res => {
+      getArticles(pageIndex.value, pageSize.value);
+      article_info_req.value.article.title = '';
+      article_info_req.value.article.description = '';
+      article_info_req.value.article.body = '';
+      article_info_req.value.article.tagList = [];
+    })
+}
 
 function handleDelete(article: Article){
   ElMessageBox.confirm(
