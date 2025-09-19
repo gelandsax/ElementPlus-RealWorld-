@@ -3,6 +3,23 @@ import { useUserStore } from '../store/user'
 import { storeToRefs } from 'pinia'
 
 const routes = [
+  {
+    name:"articles",
+    path:"/articles",
+    component: () => import('../views/Home.vue'),
+    children:[
+      {
+        name:'all_article',
+        path:'all_article',
+        component: () => import('../views/AllArticle.vue')
+      },
+      {
+        name:'my_article',
+        path:'my_article',
+        component: () => import('../views/MyArticle.vue')
+      }
+    ]
+  },
   { 
     name:'home',
     path: '/', 
@@ -43,7 +60,7 @@ const routes = [
   },
   { 
     name:'article',
-    path: '/articles/:slug', 
+    path: '/article/:slug', 
     component:  () => import('../views/Article.vue')
   },
 ]
