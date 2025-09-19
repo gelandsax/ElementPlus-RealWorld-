@@ -1,9 +1,9 @@
 <template>
-     <el-button type="primary" class="!ml-0" plain @click="dialogFormVisible = true">
-      Open a Form nested Dialog
+  <el-button type="primary" class="!ml-0" plain @click="dialogFormVisible = true">
+      新增文章
   </el-button>
 
-  <el-dialog v-model="dialogFormVisible" title="Shipping address" width="500">
+  <el-dialog v-model="dialogFormVisible" title="文章管理" width="500">
     <el-form :model="article_info_req">
       <el-form-item label="title" label-width="200px">
         <el-input v-model="article_info_req.article.title" autocomplete="off" />
@@ -21,7 +21,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="addArticle()">
+        <el-button type="primary" @click="processArticle()">
           Confirm
         </el-button>
       </div>
@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import axios from '../utils/request'
-import type { Article, CreateArticleReq, MultiArticles, Tags } from '../models';
+import type { Article, CreateArticleReq, MultiArticles, SingleArticleInfo, Tags } from '../models';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '../store/user'
 import { storeToRefs } from 'pinia'
@@ -80,6 +80,7 @@ const pageIndex = ref<number>(1)
 const pageSize = ref<number>(10)
 
 let dialogFormVisible = ref<boolean>(false);
+let article_slug = ref<string>('');
 
 let article_info_req = ref<CreateArticleReq>({
   article: {
@@ -89,16 +90,46 @@ let article_info_req = ref<CreateArticleReq>({
     tagList: []
   }
 })
+let article_detail_info = ref<SingleArticleInfo>({
+  article: {
+    slug: '',
+    title: '',
+    description: '',
+    body: '',
+    tagList: [],
+    createdAt: '',
+    updatedAt: '',
+    favorited: false,
+    favoritesCount: 0,
+    author: {
+      username: '',
+      bio: '',
+      image: '',
+      following: false
+    }
+  }
+})
+function processArticle(){
 
-function addArticle(){
-  dialogFormVisible.value = false;
-  axios.post('/articles', article_info_req.value).then(res => {
+  if(article_slug.value === ''){
+    axios.post('/articles', article_info_req.value).then(res => {
       getArticles(pageIndex.value, pageSize.value);
-      article_info_req.value.article.title = '';
-      article_info_req.value.article.description = '';
-      article_info_req.value.article.body = '';
-      article_info_req.value.article.tagList = [];
+      
     })
+  }
+  else
+  {
+    axios.put(`/articles/${article_slug.value}`, article_info_req.value).then(res => {
+      article_slug.value = ''
+      getArticles(pageIndex.value, pageSize.value);
+    })
+  }
+  dialogFormVisible.value = false;
+  article_info_req.value.article.title = '';
+  article_info_req.value.article.description = '';
+  article_info_req.value.article.body = '';
+  article_info_req.value.article.tagList = [];
+ 
 }
 
 function handleDelete(article: Article){
@@ -113,7 +144,7 @@ function handleDelete(article: Article){
   )
     .then(() => {
       axios.delete(`/articles/${article.slug}`).then(res=>{
-      getArticles(pageIndex.value, pageSize.value);
+    getArticles(pageIndex.value, pageSize.value);
   })
     })
     .catch(() => {
@@ -125,7 +156,16 @@ function handleDelete(article: Article){
   
 }
 function handleEdit(article: Article){
-
+  
+  axios.get(`/articles/${article.slug}`).then(res => {
+      article_slug.value = article.slug
+      article_detail_info.value = res.data;
+      article_info_req.value.article.title = article_detail_info.value.article.title;
+      article_info_req.value.article.description = article_detail_info.value.article.description;
+      article_info_req.value.article.body = article_detail_info.value.article.body;
+      article_info_req.value.article.tagList = article_detail_info.value.article.tagList;
+      dialogFormVisible.value = true;
+    })
 }
 
 
