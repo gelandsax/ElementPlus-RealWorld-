@@ -17,7 +17,7 @@ export default defineConfig({
       ['/dev-api']: {
         changeOrigin: true,
         // 接口地址
-        target: 'http://localhost:8080/api',
+        target: 'https://conduit-api.bondaracademy.com/api',
         configure: (proxy, options) => {
           proxy.on('proxyReq', (proxyReq, req, res) => {
             proxyReq.removeHeader('referer')
