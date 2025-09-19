@@ -90,7 +90,7 @@ author: string, tag_name:string)
   let limit = pageSize;
   let offset = (pageIndex - 1) * pageSize
 
-  if(tag_name!==''&&author!==''){
+  if(tag_name!==''&&author!==''){ 
     url += `?tag=${tag_name}&author=${author}&limit=${limit}&offset=${offset}`
   }
   else if(tag_name!==''){
@@ -102,9 +102,6 @@ author: string, tag_name:string)
   else{
     url+=`?limit=${limit}&offset=${offset}`
   }
-
-
-
 
   axios.get(url).then(res => {
     article_info.value = res.data;
