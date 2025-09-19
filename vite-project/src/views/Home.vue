@@ -9,13 +9,12 @@
           </el-icon>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>View</el-dropdown-item>
-              <el-dropdown-item>Add</el-dropdown-item>
-              <el-dropdown-item>Delete</el-dropdown-item>
+              <el-dropdown-item>编辑</el-dropdown-item>
+              <el-dropdown-item @click.prevent="logout()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-        <span>Tom</span>
+        <span>{{ userinfo?.username }}</span>
       </div>
     </el-header>
 
@@ -73,6 +72,7 @@ import type { Tags, MultiArticles } from "../models";
 import { RouterLink, RouterView } from 'vue-router';
 import { useUserStore } from "../store/user";
 import { storeToRefs } from "pinia";
+import router from "../router";
 let store = useUserStore();
 const { userinfo } = storeToRefs(store);
 
@@ -105,6 +105,11 @@ function OnGlobalClick() {
   });
 }
 
+function logout(){
+  store.clearUserInfo()
+  localStorage.removeItem('user')
+  router.push({ name: 'login' })
+}
 onMounted(() => {
   axios.get("/tags").then((res) => {
     tag_info.value = res.data;
